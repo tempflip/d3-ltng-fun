@@ -23,8 +23,8 @@ public with sharing class d3Controller {
 													OR bt_stripe__Transaction_Status__c = 'Failed'
 													)
 												AND bt_stripe__Due_Date__c != null
-												AND bt_stripe__Due_Date__c >= 2017-08-01
-												AND bt_stripe__Due_Date__c <= 2017-10-31
+												AND bt_stripe__Due_Date__c >= 2017-01-01
+												AND bt_stripe__Due_Date__c <= 2017-12-31
 												//LIMIT 300
 											];
 
