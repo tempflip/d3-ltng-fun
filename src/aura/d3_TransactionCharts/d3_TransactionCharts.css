@@ -1,9 +1,19 @@
-.THIS .point {
+.THIS circle.completed {
 	fill : #1589ee;
+}
+
+.THIS circle.failed {
+	fill : #d4504c;
 }
 
 .THIS .line.completed {
     fill: none;
     stroke: #d9ffdf;
+    stroke-width: 3;
+}
+
+.THIS .line.failed {
+    fill: none;
+    stroke: #ffdde1;
     stroke-width: 3;
 }	

@@ -42,6 +42,12 @@
 								.curve(d3.curveMonotoneX)
 								;
 
+		var line_failed = d3.line()
+								.x((d) => { return date_scale( (new Date(d.dueDate)).getTime()) })
+								.y((d) => { return amount_scale(d.completedAmount + d.failedAmount)})
+								.curve(d3.curveMonotoneX)
+								;
+
 		var amount_axis = d3.axisLeft(amount_scale);
 		var date_axis = d3.axisBottom(date_scale);
 
@@ -58,8 +64,6 @@
 			.append('svg')
 				.attr('width', w)
 				.attr('height', h)
-			// .append('g')
-			// 	.attr('class', 'chart')
 		;
 
 		svg.append('g')
@@ -74,11 +78,13 @@
 			.call(amount_axis)
 		;
 
-		svg.selectAll('circle')
+		// the completed
+		////////////////////////
+		svg.selectAll('circle.completed')
 			.data(data)
 			.enter()
 			.append('circle')
-				.attr('class', 'point')
+				.attr('class', 'completed')
 				.attr('cx', (d) => { return date_scale( new Date(d.dueDate) ) })
 				.attr('cy', (d) => { return amount_scale(d.completedAmount) })
 				.attr('r', 5)
@@ -88,6 +94,23 @@
 			.attr('class', 'line completed')
 			.attr('d', line_completed(data))
 		;		
+
+		// the failed
+		/////////////////
+		svg.selectAll('circle.failed')
+			.data(data)
+			.enter()
+			.append('circle')
+				.attr('class', 'circle failed')
+				.attr('cx', (d) => { return date_scale( new Date(d.dueDate) ) })
+				.attr('cy', (d) => { return amount_scale(d.completedAmount + d.failedAmount) })
+				.attr('r', 5)
+		;	
+
+		svg.append('path')
+			.attr('class', 'line failed')
+			.attr('d', line_failed(data))
+		;	
 
 	}
  

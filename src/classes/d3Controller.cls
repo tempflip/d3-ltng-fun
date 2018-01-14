@@ -2,6 +2,8 @@ public with sharing class d3Controller {
 	
 	public class TransactionSummary {
 		public Decimal completedAmount;
+		public Decimal refundedAmount;
+		public Decimal failedAmount;
 		public Date dueDate;
 	}
 
@@ -13,8 +15,13 @@ public with sharing class d3Controller {
 													,bt_stripe__Transaction_Status__c
 													,bt_stripe__Payment_Status__c
 												FROM bt_stripe__Transaction__c
-												WHERE bt_stripe__Transaction_Status__c = 'Completed'
-												AND bt_stripe__Payment_Status__c = 'Captured'
+												WHERE 
+													(
+														(bt_stripe__Transaction_Status__c = 'Completed'
+															AND (bt_stripe__Payment_Status__c = 'Captured' OR bt_stripe__Payment_Status__c = 'Refunded')
+														)
+													OR bt_stripe__Transaction_Status__c = 'Failed'
+													)
 												AND bt_stripe__Due_Date__c != null
 												AND bt_stripe__Due_Date__c >= 2017-08-01
 												AND bt_stripe__Due_Date__c <= 2017-10-31
@@ -34,9 +41,18 @@ public with sharing class d3Controller {
 		for (Date keyDate : traByDueDate.keySet()) {
 			TransactionSummary item = new TransactionSummary();
 			item.completedAmount = 0;
+			item.refundedAmount = 0;
+			item.failedAmount = 0;
 			item.dueDate = keyDate;
 			for (bt_stripe__Transaction__c tra : traByDueDate.get(keyDate)) {
-				item.completedAmount += tra.bt_stripe__Amount__c;
+
+				if (tra.bt_stripe__Transaction_Status__c == 'Completed' && tra.bt_stripe__Payment_Status__c == 'Captured') {
+					item.completedAmount += tra.bt_stripe__Amount__c;
+				} else if (tra.bt_stripe__Transaction_Status__c == 'Completed' && tra.bt_stripe__Payment_Status__c == 'Refunded') {
+					item.refundedAmount  += tra.bt_stripe__Amount__c;
+				} else if (tra.bt_stripe__Transaction_Status__c == 'Failed') {
+					item.failedAmount += tra.bt_stripe__Amount__c;
+				}
 			}
 			tList.add(item);
 		}
