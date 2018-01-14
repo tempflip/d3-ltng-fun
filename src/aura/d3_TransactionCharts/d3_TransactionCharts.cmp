@@ -1,0 +1,9 @@
+<aura:component implements="force:appHostable, flexipage:availableForAllPageTypes, force:hasRecordId, force:hasSObjectName" access="global" controller="d3Controller">
+	<ltng:require scripts="{!$Resource.d3}"
+		afterScriptsLoaded="{!c.d3Loaded}" />
+
+
+	hello
+
+	<div id="chart"></div>
+</aura:component>

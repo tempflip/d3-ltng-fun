@@ -1,6 +1,21 @@
-<apex:page >
-  <!-- Begin Default Content REMOVE THIS -->
-  <h1>Congratulations</h1>
-  This is your new Page
-  <!-- End Default Content REMOVE THIS -->
+<apex:page showHeader="true" sidebar="true">
+
+	<apex:includeLightning />
+
+	<div id="lDiv" />
+
+	<script>
+		var nameSpacePrefix = 'c';
+
+		$Lightning.use(nameSpacePrefix + ':d3_lout', function() {
+			$Lightning.createComponent(nameSpacePrefix + ':d3_TransactionCharts',
+				{
+				},
+				'lDiv',
+				function(cmp) {
+				}
+			);
+		});
+	</script>
+
 </apex:page>

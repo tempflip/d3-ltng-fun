@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<hread>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+
+	<style>
+		.row {
+			clear: left;
+			padding: 7px;
+			margin : 5px;
+		}
+		.label {
+			font-family: Tahoma;
+			float: left;
+			width: 400px;
+		}
+
+		.bar {
+			border: 1px solid;
+			float: left;
+		}
+	</style>
+
+</hread>
+
+<body>
+	
+	<script type="text/javascript">
+		function draw_subway(data) {
+			d3.select('#dashboard')
+				.append('ul')
+				.selectAll('li')
+				.data(data)
+				.enter()
+				.append('li')
+					.text(function (d) {
+						return d.name + ' : ' + d.status;
+					})
+				.style('color', function(d) {
+					if (d.status == 'GOOD SERVICE') return 'blue';
+					else return 'red';
+				})					
+		}
+
+		function draw_plaza_traffic(data) {
+			d3.select('#traffic')
+				.selectAll('div')
+				.data(data)
+				.enter()
+				.append('div')
+					.attr('class', 'row')
+				.append('div')
+					.attr('class', 'label')
+					.text(function(d) { return d.name})
+				
+			d3.selectAll('div.row')
+				.append('div')
+				.attr('class', 'bar')
+				.text(function(d) {
+						return d.count;
+				})
+				.style('width', function(d) {return 180 + d.count / 100 + 'px'})
+
+		}
+
+		d3.json("./subway.json", draw_subway);
+		d3.json("./plaza_traffic.json", draw_plaza_traffic);
+
+	</script>	
+
+	<div id="dashboard"></div>
+
+	<div id="traffic"></div>
+
+</body>
+
+</html>

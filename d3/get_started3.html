@@ -1,0 +1,129 @@
+<html>
+
+<head>
+
+	<style type="text/css">
+		circle.times_square {
+			fill: white;
+			stroke : magenta;
+			stroke-width: 1;
+		}
+
+		circle.grand_central {
+			fill: green;
+		}	
+
+		.line.times_square {
+		    fill: none;
+		    stroke: #ffab00;
+		    stroke-width: 3;
+		}		
+
+		.line.grand_central {
+		    fill: none;
+		    stroke: #12ab37;
+		    stroke-width: 1;
+		}				
+
+	</style>
+
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script type="text/javascript">
+		
+
+
+		function draw(data) {
+			var margin = 40, width = 700 - margin, height = 300;
+
+			var count_extent = d3.extent(data.times_square, function(d) { return d.count;});
+			var time_extent = d3.extent(data.times_square.concat(data.grand_central),
+									function(d) { return d.time;});
+
+			console.log(count_extent, time_extent);
+
+			var count_scale = d3.scaleLinear()
+								.range([height, margin])
+								.domain(count_extent);
+
+			var time_scale = d3.scaleTime()
+								.range([margin, width - margin])
+								.domain(time_extent);
+
+			var time_axis = d3.axisBottom(time_scale);
+			var count_axis = d3.axisLeft(count_scale);
+
+			var line = d3.line()
+						.x(function(d) { return time_scale(d.time)})
+       					.y(function(d) { return count_scale(d.count)})
+       					.curve(d3.curveMonotoneX)
+       					;
+
+			d3.select("body")
+				.append('svg')
+					.attr('width', width)
+					.attr('height', height)
+				.append('g')
+					.attr('class', 'chart')
+			;
+
+			d3.select('svg')
+				.selectAll('circle.times_square')
+				.data(data.times_square)
+				.enter()
+				.append('circle')
+					.attr('class', 'times_square')
+					.attr('cx', function(d) { return time_scale(d.time);})
+					.attr('cy', function(d) { return count_scale(d.count);})
+					.attr('r', 4)
+			;
+
+			d3.select('svg')
+				.selectAll('circle.grand_central')
+				.data(data.grand_central)
+				.enter()
+				.append('circle')
+					.attr('class', 'grand_central')
+					.attr('cx', function(d) { return time_scale(d.time);})
+					.attr('cy', function(d) { return count_scale(d.count);})
+					.attr('r', 3)
+			;
+
+
+			d3.select('svg')
+				.append('g')
+					.attr('class', 'y axis')
+					.attr('transform', 'translate(' +margin+', 0)')
+				.call(count_axis)
+			;
+
+			d3.select('svg')
+				.append('g')
+					.attr('class', 'x axis')
+					.attr('transform', 'translate(0, ' + (height-margin) +')')
+				.call(time_axis)
+			;
+
+			d3.select('svg')
+				.append('path')
+				.attr('class', 'line times_square')
+				.attr('d', line(data.times_square))
+			;
+
+			d3.select('svg')
+				.append('path')
+				.attr('class', 'line grand_central')
+				.attr('d', line(data.grand_central))
+			;			
+		}
+
+		d3.json('turnstile_traffic.json', draw);
+
+	</script>
+
+</head>
+
+<body>
+
+
+</body>
+</html>
