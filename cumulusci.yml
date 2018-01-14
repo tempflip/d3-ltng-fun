@@ -1,0 +1,6 @@
+project:
+    name: d3-ltng-fun
+    package:
+        name: d3-ltng-fun
+        namespace: d3
+        api_version: 41.0
