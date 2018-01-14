@@ -3,7 +3,7 @@
 		afterScriptsLoaded="{!c.d3Loaded}" />
 
 
-	hello
+	hello im an extremly cool plot
 
 	<div id="chart"></div>
 </aura:component>

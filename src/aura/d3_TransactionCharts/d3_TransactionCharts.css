@@ -1,2 +1,9 @@
-.THIS {
+.THIS .point {
+	fill : #1589ee;
 }
+
+.THIS .line.completed {
+    fill: none;
+    stroke: #d9ffdf;
+    stroke-width: 3;
+}	
