@@ -24,7 +24,7 @@
 		});
 		console.log('my data', data);
 
-		var w = 700, h = 500, margin = 40;
+		var w = 900, h = 700, margin = 40;
 
 		var amount_extent = d3.extent(data, (d) => {return d.completedAmount});
 		var date_extent = d3.extent(data, (d) => {return (new Date(d.dueDate)).getTime() });

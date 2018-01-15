@@ -1,0 +1,67 @@
+<html>
+
+<head>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<body>
+
+	<div id="chart"></div>
+	<button onclick="update()">UPDATE</button>
+
+	<script type="text/javascript">
+
+		var data = [
+			{"x" : 1, "y" : 4},
+			{"x" : 2, "y" : 6},
+			{"x" : 3, "y" : 8},
+			{"x" : 4, "y" : 10},
+			{"x" : 5, "y" : 15},
+			{"x" : 6, "y" : 12},
+			{"x" : 7, "y" : 2},
+			{"x" : 8, "y" : 10},
+			{"x" : 9, "y" : 12},
+			{"x" : 10, "y" : 13},
+		];
+
+		function draw(data) {
+			var svg = d3.select('#chart')
+						.append('svg')
+							.attr('widht', 400)
+							.attr('height', 400)
+							.attr('class', 'canvas')
+			;
+
+			svg.selectAll('circle')
+				.data(data)
+				.enter()
+				.append('circle')
+					.attr('cx', (d) => {return d.x * 20})
+					.attr('cy', (d) => {return d.y * 10})
+					.attr('r', 6);
+
+		}
+
+		function update() {
+			// data.push({"x" : data.length+1, "y" : data.length * 2});
+			data = data.map((d) => {d.y += Math.random() * 2; return d;});
+			console.log(data);
+
+			var svg = d3.select('svg.canvas');
+
+			// svg.selectAll('circle')
+			// 	.data(data)
+			// 	.exit().remove()
+			// 	.enter()
+			// 	.append('circle')
+			// 		.attr('cx', (d) => {return d.x * 20})
+			// 		.attr('cy', (d) => {return d.y * 10})
+			// 		.attr('r', 6);			
+
+		}
+
+		draw(data);
+	</script>
+
+</body>
+</html>
