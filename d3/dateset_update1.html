@@ -27,27 +27,30 @@
 		function draw(data) {
 			var svg = d3.select('#chart')
 						.append('svg')
-							.attr('widht', 400)
-							.attr('height', 400)
+							.attr('width', 1000)
+							.attr('height', 300)
 							.attr('class', 'canvas')
 			;
 
-			svg.selectAll('circle')
+			var points = svg.selectAll('circle')
 				.data(data)
 				.enter()
-				.append('circle')
+				.append('circle');
+
+			render(points);
+		}
+
+		function render(points) {
+			points.transition()
 					.attr('cx', (d) => {return d.x * 20})
 					.attr('cy', (d) => {return d.y * 10})
 					.attr('r', 6);
-
 		}
 
 		function update() {
 
-
-
-			// data.push({"x" : data.length+1, "y" : data.length * 2});
-			//data = data.map((d) => {d.y += Math.random() * 2; return d;});
+			data.push({"x" : data.length+1, "y" : 5});
+			data = data.map((d) => {d.y += 1 - Math.random() * 2; return d;});
 		
 			var d2 = [
 				{"x" : 1, "y" : 5},
@@ -64,16 +67,12 @@
 
 			var svg = d3.select('.canvas');
 
-			svg.selectAll('circle')
-				.data(d2)
-				.exit().remove()
-				.enter()
-				.append('circle')
-					.attr('cx', (d) => {return d.x * 20})
-					.attr('cy', (d) => {return d.y * 10})
-					.attr('r', 6)
-				.exit().remove();
+			var points = svg.selectAll('circle')
+				.data(data);
 
+			points.exit().remove();
+			points.enter().append('circle');
+			render(points);
 		}
 
 		draw(data);

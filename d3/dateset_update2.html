@@ -34,18 +34,12 @@
                 {"x" : 10, "y" : 13},
             ];     
 
-            var data2 = [
-                {"x" : 1, "y" : 2},
-                {"x" : 2, "y" : 8},
-                {"x" : 3, "y" : 8},
-                {"x" : 4, "y" : 12},
-                {"x" : 5, "y" : 11},
-                {"x" : 6, "y" : 11},
-                {"x" : 7, "y" : 12},
-                {"x" : 8, "y" : 2},
-                {"x" : 9, "y" : 3},
-                {"x" : 10, "y" : 5},
-            ];                     
+            function mixData() {
+                data1 = data1.map((d) => {
+                    d.y += 2 - Math.random() * 4;
+                    return d;
+                });
+            }                 
             
             //globals
             var dataIndex=1;
@@ -66,33 +60,29 @@
                 .attr("cy",(d) => {return d.y * 10})
                 .attr("r", 5 );
             
+            function updateChart() {
+                    mixData();
 
+                    var circle = svgDoc //.select("g")
+                        .selectAll("circle")
+                        .data(data1);
+                        
+                    circle.exit().remove();
+                    circle.enter().append("circle");
 
-
-
-
+                    //update all circles to new positions
+                    circle.transition()
+                        // .duration(500)
+                        .attr("cx", (d) => {return d.x * 10})
+                        .attr("cy",(d) => {return d.y * 10})
+                        .attr("r", 5 );
+            }
 
             //button to swap over datasets
             d3.select("body").append("button")
                 .text("change data")
-                .on("click",function(){
-                    //rejoin data
-                    var circle = svgDoc.select("g").selectAll("circle")
-                        .data(data2);
-                    
-                    circle.exit().remove();//remove unneeded circles
-                    circle.enter().append("circle")
-                        .attr("r",3);//create any new circles needed
+                .on("click", updateChart);
 
-                    //update all circles to new positions
-                    circle.transition()
-                        .duration(500)
-                        .attr("cx", (d) => {return d.x * 10})
-                        .attr("cy",(d) => {return d.y * 10})
-                        .attr("r", 5 );
-
-
-                });//end click function
 
             
         </script>
