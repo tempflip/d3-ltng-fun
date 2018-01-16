@@ -43,20 +43,36 @@
 		}
 
 		function update() {
+
+
+
 			// data.push({"x" : data.length+1, "y" : data.length * 2});
-			data = data.map((d) => {d.y += Math.random() * 2; return d;});
-			console.log(data);
+			//data = data.map((d) => {d.y += Math.random() * 2; return d;});
+		
+			var d2 = [
+				{"x" : 1, "y" : 5},
+				{"x" : 2, "y" : 5},
+				{"x" : 3, "y" : 5},
+				{"x" : 4, "y" : 6},
+				{"x" : 5, "y" : 7},
+				{"x" : 6, "y" : 2},
+				{"x" : 7, "y" : 3},
+				{"x" : 8, "y" : 4},
+				{"x" : 9, "y" : 5},
+				{"x" : 10, "y" : 4},
+			];
 
-			var svg = d3.select('svg.canvas');
+			var svg = d3.select('.canvas');
 
-			// svg.selectAll('circle')
-			// 	.data(data)
-			// 	.exit().remove()
-			// 	.enter()
-			// 	.append('circle')
-			// 		.attr('cx', (d) => {return d.x * 20})
-			// 		.attr('cy', (d) => {return d.y * 10})
-			// 		.attr('r', 6);			
+			svg.selectAll('circle')
+				.data(d2)
+				.exit().remove()
+				.enter()
+				.append('circle')
+					.attr('cx', (d) => {return d.x * 20})
+					.attr('cy', (d) => {return d.y * 10})
+					.attr('r', 6)
+				.exit().remove();
 
 		}
 

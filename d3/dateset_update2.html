@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            svg {width:500px; height:500px}
+            button  {float:left}
+            line    {stroke:#ddd;shape-rendering: crispEdges;}
+            text    {text-anchor:middle;}
+            circle {fill:orange;stroke:orange;fill-opacity:0.5;}
+            .axis line {fill:none;stroke:#ddd;shape-rendering: crispEdges;}
+            .axis path  {fill:none;}
+            .axis text {font-size:0.7em;fill:#555;font-family:sans-serif}
+        </style>
+        <script src="http://d3js.org/d3.v3.js"></script>
+    </head>
+    <body>
+        
+        <script>
+            
+            //2 different data arrays
+            var dataArray1 = [30,35,45,55,70];
+            var dataArray2 = [50,55,45,35,20,25,25,40];
+
+            var data1 = [
+                {"x" : 1, "y" : 4},
+                {"x" : 2, "y" : 6},
+                {"x" : 3, "y" : 8},
+                {"x" : 4, "y" : 10},
+                {"x" : 5, "y" : 15},
+                {"x" : 6, "y" : 12},
+                {"x" : 7, "y" : 2},
+                {"x" : 8, "y" : 10},
+                {"x" : 9, "y" : 12},
+                {"x" : 10, "y" : 13},
+            ];     
+
+            var data2 = [
+                {"x" : 1, "y" : 2},
+                {"x" : 2, "y" : 8},
+                {"x" : 3, "y" : 8},
+                {"x" : 4, "y" : 12},
+                {"x" : 5, "y" : 11},
+                {"x" : 6, "y" : 11},
+                {"x" : 7, "y" : 12},
+                {"x" : 8, "y" : 2},
+                {"x" : 9, "y" : 3},
+                {"x" : 10, "y" : 5},
+            ];                     
+            
+            //globals
+            var dataIndex=1;
+            var xBuffer=50;
+            var yBuffer=150;
+            var lineLength=400;
+            
+            
+            //create main svg element
+            var svgDoc = d3.select("body").append("svg")
+            
+            //create basic circles
+            svgDoc.append("g").selectAll("circle")
+                .data(data1)
+                .enter()
+                .append("circle")
+                .attr("cx", (d) => {return d.x * 10})
+                .attr("cy",(d) => {return d.y * 10})
+                .attr("r", 5 );
+            
+
+
+
+
+
+
+            //button to swap over datasets
+            d3.select("body").append("button")
+                .text("change data")
+                .on("click",function(){
+                    //rejoin data
+                    var circle = svgDoc.select("g").selectAll("circle")
+                        .data(data2);
+                    
+                    circle.exit().remove();//remove unneeded circles
+                    circle.enter().append("circle")
+                        .attr("r",3);//create any new circles needed
+
+                    //update all circles to new positions
+                    circle.transition()
+                        .duration(500)
+                        .attr("cx", (d) => {return d.x * 10})
+                        .attr("cy",(d) => {return d.y * 10})
+                        .attr("r", 5 );
+
+
+                });//end click function
+
+            
+        </script>
+    </body>
+</html>
