@@ -21,6 +21,11 @@
 
 	setTransactionSummaryList : function(cmp, data, isInit) {
 		var d = JSON.parse(data)
+
+		d.sort(function (a, b) {
+			return (new Date(a.dueDate)).getTime() - (new Date(b.dueDate)).getTime();
+		});
+
 		cmp.set('v.data', d);
 
 		if (isInit == true) this.initChart(cmp);
@@ -36,6 +41,9 @@
 
 		var amount_extent = d3.extent(data, (d) => {return d.completedAmount});
 		var date_extent = d3.extent(data, (d) => {return (new Date(d.dueDate)).getTime() });
+
+
+		console.log('###', amount_extent, date_extent);
 
 		var amount_scale = d3.scaleLinear()
 							.range([h-margin, margin])
@@ -70,16 +78,7 @@
 		var w = this.getW(), h = this.getH(), margin = this.getMargin();
 
 		var data = cmp.get('v.data').slice(0);
-
-		console.log('## data', data);
-
-		data.sort(function (a, b) {
-			return (new Date(a.dueDate)).getTime() - (new Date(b.dueDate)).getTime();
-		});
-		console.log('my data', data);
-
 		
-
 		var scaleList = this.getAmountScaleAndDateScale(data);
 		var amount_scale = scaleList[0];
 		var date_scale = scaleList[1];
@@ -109,7 +108,7 @@
 
 		// the completed
 		////////////////////////
-		var points = svg.selectAll('circle.completed')
+		var points = svg.selectAll('circle')
 			.data(data)
 			.enter()
 			.append('circle')
@@ -144,19 +143,28 @@
 		var w = this.getW(), h = this.getH(), margin = this.getMargin();		
 		var data = cmp.get('v.data').slice(0);
 
-
 		var scaleList = this.getAmountScaleAndDateScale(data);
 		var amount_scale = scaleList[0];
 		var date_scale = scaleList[1];
 
+
+
+
+
 		var svg = d3.select('#chart').select('svg');
 		this.drawAxis(svg, amount_scale, date_scale);
 
-		var points = d3.select('#chart').selectAll('circle.completed')
+
+		var points = d3.select('#chart').selectAll('circle')
 						.data(data);
-		points.exit().remove();
+
 		points.enter().append('circle');
+		points.exit().remove();
+		
+
 		this.renderPoints(points, date_scale, amount_scale);
+
+		console.log('@@@@@ AHA', data.length);
 		
 	},
 

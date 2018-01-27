@@ -6,7 +6,7 @@
 
 	<lightning:layout horizontalAlign="space">
 		<lightning:layoutItem>
-			<ui:inputDate aura:id="fromDate" change="{!c.dateChanged}" label="From" value="2017-05-01" displayDatePicker="true"/>
+			<ui:inputDate aura:id="fromDate" change="{!c.dateChanged}" label="From" value="2017-06-01" displayDatePicker="true"/>
 		</lightning:layoutItem>
 
 		<lightning:layoutItem>
