@@ -1,35 +1,38 @@
 ({
-	startChart : function(cmp) {
+	loadData : function(cmp, isInit) {
+		
+		var fromDate = cmp.find('fromDate').get('v.value');
+		var toDate = cmp.find('toDate').get('v.value');
+
 		var action = cmp.get('c.getTransactionSummaryList');
+
+		action.setParams({
+			fromDate : fromDate,
+			toDate : toDate
+		});
 
 		action.setCallback(this, function(r) {
 			if (r.getState() == 'SUCCESS') {
-				this.setTransactionSummaryList(cmp, r.getReturnValue());
+				this.setTransactionSummaryList(cmp, r.getReturnValue(), isInit);
 			}
 		})
 		$A.enqueueAction(action);
 	},
 
-	setTransactionSummaryList : function(cmp, data) {
-		
+	setTransactionSummaryList : function(cmp, data, isInit) {
 		var d = JSON.parse(data)
 		cmp.set('v.data', d);
 
-		this.drawChart(cmp);
-
+		if (isInit == true) this.initChart(cmp);
+		else this.updateChart(cmp);
 	},
 
-	drawChart : function(cmp) {
-		var data = cmp.get('v.data').slice(0);
+	getW : function() {return 600},
+	getH : function() {return 500},
+	getMargin : function() {return 40},
 
-		console.log('## data', data);
-
-		data.sort(function (a, b) {
-			return (new Date(a.dueDate)).getTime() - (new Date(b.dueDate)).getTime();
-		});
-		console.log('my data', data);
-
-		var w = 600, h = 600, margin = 40;
+	getAmountScaleAndDateScale : function(data) {
+		var w = this.getW(), h = this.getH(), margin = this.getMargin();
 
 		var amount_extent = d3.extent(data, (d) => {return d.completedAmount});
 		var date_extent = d3.extent(data, (d) => {return (new Date(d.dueDate)).getTime() });
@@ -40,36 +43,15 @@
 		var date_scale = d3.scaleTime()
 							.range([margin, w-margin])
 							.domain( date_extent );
+		return [amount_scale, date_scale];
+	},
 
-		var line_completed = d3.line()
-								.x((d) => { return date_scale( (new Date(d.dueDate)).getTime()) })
-								.y((d) => { return amount_scale(d.completedAmount)})
-								.curve(d3.curveMonotoneX)
-								;
-
-		var line_failed = d3.line()
-								.x((d) => { return date_scale( (new Date(d.dueDate)).getTime()) })
-								.y((d) => { return amount_scale(d.completedAmount + d.failedAmount)})
-								.curve(d3.curveMonotoneX)
-								;
-
+	drawAxis : function(svg, amount_scale, date_scale) {
+		var w = this.getW(), h = this.getH(), margin = this.getMargin();		
 		var amount_axis = d3.axisLeft(amount_scale);
 		var date_axis = d3.axisBottom(date_scale);
 
-
-
-		// console.log(amount_extent, date_extent);
-		// console.log(amount_scale(amount_extent[0]),
-		// 			amount_scale(amount_extent[1]),
-		// 			date_scale(date_extent[0]),
-		// 			date_scale(date_extent[1])  );
-
-
-		var svg = d3.select('#chart')
-			.append('svg')
-				.attr('width', w)
-				.attr('height', h)
-		;
+		svg.selectAll('.axis').remove();
 
 		svg.append('g')
 			.attr('class', 'x axis')
@@ -82,6 +64,48 @@
 			.attr('transform', 'translate('+ margin +', ' + 0 +')')
 			.call(amount_axis)
 		;
+	},
+
+	initChart : function(cmp) {
+		var w = this.getW(), h = this.getH(), margin = this.getMargin();
+
+		var data = cmp.get('v.data').slice(0);
+
+		console.log('## data', data);
+
+		data.sort(function (a, b) {
+			return (new Date(a.dueDate)).getTime() - (new Date(b.dueDate)).getTime();
+		});
+		console.log('my data', data);
+
+		
+
+		var scaleList = this.getAmountScaleAndDateScale(data);
+		var amount_scale = scaleList[0];
+		var date_scale = scaleList[1];
+
+		// var line_completed = d3.line()
+		// 						.x((d) => { return date_scale( (new Date(d.dueDate)).getTime()) })
+		// 						.y((d) => { return amount_scale(d.completedAmount)})
+		// 						.curve(d3.curveMonotoneX)
+		// 						;
+
+		// var line_failed = d3.line()
+		// 						.x((d) => { return date_scale( (new Date(d.dueDate)).getTime()) })
+		// 						.y((d) => { return amount_scale(d.completedAmount + d.failedAmount)})
+		// 						.curve(d3.curveMonotoneX)
+		// 						;
+
+
+
+		var svg = d3.select('#chart')
+			.append('svg')
+				.attr('width', w)
+				.attr('height', h)
+		;
+
+
+		this.drawAxis(svg, amount_scale, date_scale);
 
 		// the completed
 		////////////////////////
@@ -117,49 +141,23 @@
 	},
 
 	updateChart : function(cmp) {
+		var w = this.getW(), h = this.getH(), margin = this.getMargin();		
 		var data = cmp.get('v.data').slice(0);
 
-		var w = 600, h = 600, margin = 40;
-		console.log('### update', data);
 
-		var amount_extent = d3.extent(data, (d) => {return d.completedAmount});
-		var date_extent = d3.extent(data, (d) => {return (new Date(d.dueDate)).getTime() });
+		var scaleList = this.getAmountScaleAndDateScale(data);
+		var amount_scale = scaleList[0];
+		var date_scale = scaleList[1];
 
-		var amount_scale = d3.scaleLinear()
-							.range([h-margin, margin])
-							.domain(amount_extent);
-		var date_scale = d3.scaleTime()
-							.range([margin, w-margin])
-							.domain( date_extent );
-
-
-		data = data.map((d) => { d.completedAmount = 6000; return d;});
+		var svg = d3.select('#chart').select('svg');
+		this.drawAxis(svg, amount_scale, date_scale);
 
 		var points = d3.select('#chart').selectAll('circle.completed')
 						.data(data);
 		points.exit().remove();
 		points.enter().append('circle');
 		this.renderPoints(points, date_scale, amount_scale);
-	
-		console.log('jaaaaaa')		
-
-		/*
- mixData();
-
-                    var circle = svgDoc //.select("g")
-                        .selectAll("circle")
-                        .data(data1);
-                        
-                    circle.exit().remove();
-                    circle.enter().append("circle");
-
-                    //update all circles to new positions
-                    circle.transition()
-                        // .duration(500)
-                        .attr("cx", (d) => {return d.x * 10})
-                        .attr("cy",(d) => {return d.y * 10})
-                        .attr("r", 5 );	
-                        */	
+		
 	},
 
 	renderPoints : function(points, date_scale, amount_scale) {

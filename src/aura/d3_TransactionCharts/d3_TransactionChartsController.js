@@ -1,9 +1,10 @@
 ({
 	d3Loaded : function(cmp, event, helper) {
-		helper.startChart(cmp);
+		helper.loadData(cmp, true);
 	},
 
-	buttonClicked : function(cmp, event, helper) {
-		helper.updateChart(cmp);
-	}
+	dateChanged : function(cmp, event, helper) {
+		helper.loadData(cmp, false);
+	},
+
 })

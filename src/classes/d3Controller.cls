@@ -8,7 +8,11 @@ public with sharing class d3Controller {
 	}
 
 	@AuraEnabled
-	public static String getTransactionSummaryList() {
+	public static String getTransactionSummaryList(String fromDate,
+													String toDate) {
+
+		Date fd = parseDate(fromDate);
+		Date td= parseDate(toDate);
 
 		bt_stripe__Transaction__c[] traList = [SELECT bt_stripe__Amount__c
 													,bt_stripe__Due_Date__c
@@ -23,8 +27,8 @@ public with sharing class d3Controller {
 													OR bt_stripe__Transaction_Status__c = 'Failed'
 													)
 												AND bt_stripe__Due_Date__c != null
-												AND bt_stripe__Due_Date__c >= 2017-09-01
-												AND bt_stripe__Due_Date__c <= 2017-12-31
+												AND bt_stripe__Due_Date__c >= : fd
+												AND bt_stripe__Due_Date__c <= : td
 												//LIMIT 300
 											];
 
@@ -59,4 +63,17 @@ public with sharing class d3Controller {
 
 		return JSON.serialize(tList);
 	}
+
+	private static Date parseDate(String dateString) {
+		if (dateString == null) return null;
+
+		Date dd;
+		try {
+			String[] dateChunks = dateString.split('-');
+			dd = Date.newInstance(Integer.valueOf(dateChunks[0]), Integer.valueOf(dateChunks[1]), Integer.valueOf(dateChunks[2]));
+		} catch(Exception e) {
+			//throw new VterminalException('Problem when parsing date! ' + e.getMessage());
+		}
+		return dd;		
+	}	
 }

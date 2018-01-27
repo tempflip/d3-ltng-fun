@@ -4,10 +4,18 @@
 
 	<aura:attribute name="data" type="object" access="private" />
 
+	<lightning:layout horizontalAlign="space">
+		<lightning:layoutItem>
+			<ui:inputDate aura:id="fromDate" change="{!c.dateChanged}" label="From" value="2017-05-01" displayDatePicker="true"/>
+		</lightning:layoutItem>
+
+		<lightning:layoutItem>
+			<ui:inputDate aura:id="toDate" change="{!c.dateChanged}" label="To" value="2017-12-31" displayDatePicker="true"/>
+		</lightning:layoutItem>
+	</lightning:layout>
 
 	hello im an extremly cool plot
 
 	<div id="chart"></div>
 
-	<button onclick="{!c.buttonClicked}">CLICK</button>
 </aura:component>
