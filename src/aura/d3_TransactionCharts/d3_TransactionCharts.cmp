@@ -2,8 +2,12 @@
 	<ltng:require scripts="{!$Resource.d3}"
 		afterScriptsLoaded="{!c.d3Loaded}" />
 
+	<aura:attribute name="data" type="object" access="private" />
+
 
 	hello im an extremly cool plot
 
 	<div id="chart"></div>
+
+	<button onclick="{!c.buttonClicked}">CLICK</button>
 </aura:component>
